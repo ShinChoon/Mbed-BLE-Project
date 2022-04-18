@@ -15,7 +15,7 @@
 #include <cstdint>
 
 #include "ble/GattServer.h"
-#include "example_gatt_server.hpp"
+#include "gatt_server.hpp"
 #include "secure_gap.hpp"
 #include <cstddef>
 

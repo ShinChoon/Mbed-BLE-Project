@@ -10,10 +10,9 @@
 
 #include "ble/gatt/GattAttribute.h"
 #include <cstdint>
-
-
 #include "ble/BLE.h"
 #include "ble/Gap.h"
+#include "ble_utils.h"
 
 // Blinking rate in milliseconds
 #define BLINKING_RATE     500ms
@@ -38,24 +37,24 @@ class CGAP :private mbed::NonCopyable<CGAP>, public ble::Gap::EventHandler{
         virtual void Setter(mbed::Callback<void(void)>&);
 
         
-        static void printDeviceAddress(ble::own_address_type_t type,
-                               ble::address_t address){
-            print_address(address);
-        }
-
-        static void printDeviceAddress(const ble::peer_address_type_t type,
-                                       const ble::address_t address){
-            print_address(address);
-        }
-        
-        static void printDeviceAddress(ble::address_t& address){
-            print_address(address);
-        }
-        
-        static void printError(ble_error_t error, const char *message) {
-            std::cout << message << std::endl;
-            ble::BLE::errorToString(error);
-        }
+//        static void printDeviceAddress(ble::own_address_type_t type,
+//                               ble::address_t address){
+//            print_address(address);
+//        }
+//
+//        static void printDeviceAddress(const ble::peer_address_type_t type,
+//                                       const ble::address_t address){
+//            print_address(address);
+//        }
+//        
+//        static void printDeviceAddress(ble::address_t& address){
+//            print_address(address);
+//        }
+//        
+//        static void printError(ble_error_t error, const char *message) {
+//            std::cout << message << std::endl;
+//            ble::BLE::errorToString(error);
+//        }
         
         virtual void OnBleStackInit(BLE::InitializationCompleteCallbackContext *context);
 
@@ -77,7 +76,7 @@ class CGAP :private mbed::NonCopyable<CGAP>, public ble::Gap::EventHandler{
 
     protected:
         mbed::Callback<void(void)> _on_ble_init_callback = nullptr;
-        static void print_address(const ble::address_t &addr);
+        //static void print_address(const ble::address_t &addr);
         void start_advertising();
         void update_adv();
 
