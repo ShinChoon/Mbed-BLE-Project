@@ -130,11 +130,11 @@
           return;
         }
         // enable legacy pairing
-         _ble.securityManager().allowLegacyPairing(true);
+        _ble.securityManager().allowLegacyPairing(true);
         // set the event handler to this object
-         _ble.securityManager().setSecurityManagerEventHandler(this);
+        _ble.securityManager().setSecurityManagerEventHandler(this);
         //
-         _ble.securityManager().setPairingRequestAuthorisation(true);
+        _ble.securityManager().setPairingRequestAuthorisation(true);
 
         // start advertisement using CGAP instance of this class
 

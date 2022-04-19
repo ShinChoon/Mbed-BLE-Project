@@ -1,4 +1,5 @@
-
+#ifndef GATT_SERVER_H
+#define GATT_SERVER_H
 #include "mbed.h"
 #include <iostream>
 #include <stdio.h>
@@ -15,14 +16,14 @@ class CGattService: private mbed::NonCopyable<CGattService>, public ble::GattSer
         CGattService(BLE& ble, events::EventQueue &event_queue);
 
         CGattService(BLE& ble, events::EventQueue &event_queue, 
-                    GattAttribute* userdes[5], GattCharacteristic* chara[5], const char* desc[5],
-                    const uint8_t properyties[5],UUID::LongUUIDBytes_t uuid[6], DigitalOut);
+                    GattAttribute* userdes[3], GattCharacteristic* chara[3], const char* desc[3],
+                    const uint8_t properyties[3],UUID::LongUUIDBytes_t uuid[4]);
                     
         CGattService(BLE& ble, events::EventQueue &event_queue, 
                     GattAttribute* userdes[1],GattCharacteristic* chara[1], const char* desc[1],
-                    const uint8_t properyties[1],UUID::LongUUIDBytes_t uuid[2], DigitalOut, int size);
+                    const uint8_t properyties[1],UUID::LongUUIDBytes_t uuid[2], int size);
         ~CGattService();
-        void run(void);
+        virtual void run(void);
         virtual void onDataWritten(const GattWriteCallbackParams &params) override;
         virtual void onUpdatesEnabled(const GattUpdatesEnabledCallbackParams &params) override;
         virtual void onUpdatesDisabled(const GattUpdatesDisabledCallbackParams &params) override;
@@ -32,7 +33,6 @@ class CGattService: private mbed::NonCopyable<CGattService>, public ble::GattSer
     protected:
         //GattAttribute attr;
         // declare a value of 2 bytes within a 10 bytes buffer
-        DigitalOut _led_n;
         uint8_t attribute_value[10] = {};
         GattAttribute* userDescription[3];
         GattCharacteristic* _characteristics[3];
@@ -57,3 +57,5 @@ class CGattService: private mbed::NonCopyable<CGattService>, public ble::GattSer
         void set_random_UUID(UUID::LongUUIDBytes_t* uuid);
 
 };
+
+#endif

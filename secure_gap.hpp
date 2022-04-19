@@ -102,7 +102,7 @@ class CSecureGap:private mbed::NonCopyable<CSecureGap>, public CGAP, ble::Securi
     virtual void pairingResult(ble::connection_handle_t connectionHandle,
                   SecurityManager::SecurityCompletionStatus_t result) override;
         
-    virtual void OnBleStackInit(BLE::InitializationCompleteCallbackContext *context);
+    virtual void OnBleStackInit(BLE::InitializationCompleteCallbackContext *context) override;
 
     virtual void run()override;
     virtual void Setter(mbed::Callback<void(void)>&)override;
@@ -117,8 +117,6 @@ class CSecureGap:private mbed::NonCopyable<CSecureGap>, public CGAP, ble::Securi
         ble::AdvertisingDataBuilder _adv_data_builder;
         bool switchRun = false;
         const UUID  _service_uuid;
-        uint8_t _button_count = 0;
-
         int blink_id = 0;
         ble::peripheral_privacy_configuration_t privacyConfiguration;
 

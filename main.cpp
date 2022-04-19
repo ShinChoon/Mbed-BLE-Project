@@ -15,8 +15,9 @@
 #include <cstdint>
 
 #include "ble/GattServer.h"
-#include "gatt_server.hpp"
 #include "secure_gap.hpp"
+#include "ble_gatt_alert_notification_service.hpp"
+#include "ble_gatt_immediate_alert_service.hpp"
 #include <cstddef>
 
 static EventQueue event_queue(4* EVENTS_EVENT_SIZE);
@@ -34,11 +35,15 @@ int main()
 {
     BLE &ble_interface = BLE::Instance();
     ble_interface.onEventsToProcess(schedule_ble_processing);
-    CSecureGap demo(ble_interface, event_queue, "GATTServer Secure");
-    CGattService demoservice(ble_interface, event_queue);
-    mbed::Callback<void()> cb_func;
-    cb_func = callback(&demoservice, &CGattService::run);
+    CGAP demo(ble_interface, event_queue, "GATTServer Secure");
+    //CGattService demoservice(ble_interface, event_queue);
+    AlertNotificationService AlertDemo(ble_interface, event_queue);
+    ImmediateAlertService  IASDemo(ble_interface, event_queue);
+    mbed::Callback<void()> cb_func,cb_func2;
+    cb_func = callback(&AlertDemo, &AlertNotificationService::run);
+    cb_func2 = callback(&IASDemo, &ImmediateAlertService::run);
     demo.Setter(cb_func);
+    demo.Setter2(cb_func2);
     demo.run();
     return 0;
 }

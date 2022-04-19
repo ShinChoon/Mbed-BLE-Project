@@ -13,14 +13,13 @@ void CGAP::run(){
             _event_queue.dispatch_forever();
         }
 
-void CGAP::print_address(const ble::address_t &addr)
-        {
-            printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
-                   addr[5], addr[4], addr[3], addr[2], addr[1], addr[0]);
-        }
     
 void CGAP::Setter(mbed::Callback<void(void)>& exFunction) {
         _on_ble_init_callback = exFunction;
+        }
+
+void CGAP::Setter2(mbed::Callback<void(void)>& exFunction) {
+        _on_ble_init_callback2 = exFunction;
         }
 
 void CGAP::OnBleStackInit(BLE::InitializationCompleteCallbackContext *context){
@@ -38,6 +37,8 @@ void CGAP::OnBleStackInit(BLE::InitializationCompleteCallbackContext *context){
         print_address(address);
         if (_on_ble_init_callback!=nullptr)
             _on_ble_init_callback();
+        if (_on_ble_init_callback2!=nullptr)
+            _on_ble_init_callback2();            
         start_advertising();
 
 }

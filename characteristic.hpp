@@ -1,3 +1,5 @@
+#ifndef CHARACTERISTIC_H
+#define CHARACTERISTIC_H
 #include "ble/gatt/GattAttribute.h"
 #include "ble/GattServer.h"
 #include "ble/gatt/GattCharacteristic.h"
@@ -10,9 +12,9 @@
 #define ANSCHARACTERISTIC_DESCRIPTION_2 "New Alert"
 #define ANSCHARACTERISTIC_DESCRIPTION_3 "Supported Unread Alert Category"
 #define ANSCHARACTERISTIC_DESCRIPTION_4 "Unread Alert Status"
-#define ANSCHARACTERISTIC_DESCRIPTION_5 "Alert Notification Control Point"
-//const char* IASCHARACTERISTIC_DESCRIPTION[] = {"Alert Level"};
-//
+#define ANSCHARACTERISTIC_DESCRIPTION_5 "Alert Notifi cation Control Point"
+#define IASCHARACTERISTIC_DESCRIPTION "Alert Level"
+
 template <typename T>
 class CCharacteristic : 
 public GattCharacteristic {
@@ -53,7 +55,7 @@ public GattCharacteristic {
                 sizeof(value), 
                 localOnly);
         }
-
         
 };
 
+#endif
