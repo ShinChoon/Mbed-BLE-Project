@@ -150,6 +150,8 @@
         print_address(address);
         if (_on_ble_init_callback!=nullptr)
             _on_ble_init_callback();
+        if (_on_ble_init_callback2!=nullptr)
+            _on_ble_init_callback2();
         start_advertising();
 
 
@@ -196,6 +198,12 @@
         }
 
 
-    void CSecureGap::Setter(mbed::Callback<void ()> & exFunction){
-        _on_ble_init_callback = exFunction;
-    }
+    //void CSecureGap::Setter(mbed::Callback<void ()> & exFunction){
+    //    _on_ble_init_callback = exFunction;
+    //}
+//
+//
+//
+    //void CSecureGap::Setter2(mbed::Callback<void ()> & exFunction){
+    //    _on_ble_init_callback2 = exFunction;
+    //}

@@ -35,10 +35,10 @@ int main()
 {
     BLE &ble_interface = BLE::Instance();
     ble_interface.onEventsToProcess(schedule_ble_processing);
-    CGAP demo(ble_interface, event_queue, "GATTServer Secure");
-    //CGattService demoservice(ble_interface, event_queue);
-    AlertNotificationService AlertDemo(ble_interface, event_queue);
-    ImmediateAlertService  IASDemo(ble_interface, event_queue);
+    CSecureGap demo(ble_interface, event_queue, "GATTServer Secure");
+    CGattService demoservice(ble_interface, event_queue);
+    AlertNotificationService AlertDemo(ble_interface, event_queue,demoservice);
+    ImmediateAlertService  IASDemo(ble_interface, event_queue, AlertDemo);
     mbed::Callback<void()> cb_func,cb_func2;
     cb_func = callback(&AlertDemo, &AlertNotificationService::run);
     cb_func2 = callback(&IASDemo, &ImmediateAlertService::run);

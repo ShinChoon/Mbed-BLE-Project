@@ -105,8 +105,8 @@ class CSecureGap:private mbed::NonCopyable<CSecureGap>, public CGAP, ble::Securi
     virtual void OnBleStackInit(BLE::InitializationCompleteCallbackContext *context) override;
 
     virtual void run()override;
-    virtual void Setter(mbed::Callback<void(void)>&)override;
-
+    //virtual void Setter(mbed::Callback<void(void)>&)override;
+    //virtual void Setter2(mbed::Callback<void(void)>&)override;
     private:
         ble::BLE& _ble;
         events::EventQueue& _event_queue;

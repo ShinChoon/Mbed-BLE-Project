@@ -24,7 +24,7 @@ class CGattService: private mbed::NonCopyable<CGattService>, public ble::GattSer
                     const uint8_t properyties[1],UUID::LongUUIDBytes_t uuid[2], int size);
         ~CGattService();
         virtual void run(void);
-        virtual void onDataWritten(const GattWriteCallbackParams &params) override;
+        virtual void onDataWritten(const GattWriteCallbackParams &params);
         virtual void onUpdatesEnabled(const GattUpdatesEnabledCallbackParams &params) override;
         virtual void onUpdatesDisabled(const GattUpdatesDisabledCallbackParams &params) override;
         static void kernel_clock_update(CCharacteristic<uint32_t>* gatt_characteristic);
@@ -55,6 +55,7 @@ class CGattService: private mbed::NonCopyable<CGattService>, public ble::GattSer
         int treesize = 4;
         events::EventQueue& _event_queue;
         void set_random_UUID(UUID::LongUUIDBytes_t* uuid);
+        void set_long_random_UUID(UUID::ShortUUIDBytes_t* uuid);
 
 };
 

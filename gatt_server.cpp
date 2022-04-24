@@ -10,7 +10,7 @@ CGattService::CGattService(BLE& ble,
 {
 //decide the length for user description, adding uuid and characteristic
     treesize = ARRAY_SIZE(userDescription);
-    for(int i=0; i<treesize-1; i++){
+    for(int i=0; i<treesize; i++){
             userDescription[i] = new GattAttribute(BLE_UUID_DESCRIPTOR_CHAR_USER_DESC,
             (uint8_t *) _descriptionContent[i],
             sizeof(_descriptionContent[i]),
@@ -25,22 +25,22 @@ CGattService::CGattService(BLE& ble,
     }
     
     uint8_t value = 0;
-    for (int i=0;i<treesize-1; i++){
+    for (int i=0;i<treesize; i++){
         _characteristics[i] = new CCharacteristic<uint8_t>(_uuid[i],
                                 _propertiesList[i], 
                                   value, userDescription+i, 1);
     }
 
-//    for(int i= 0; i<treesize-1; i++){
-//    // configure read security requirements
-//    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
-//    // configure write security requirements
-//    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-//    // configure update security requirements
-//    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-//    }
+    for(int i= 0; i<treesize; i++){
+    // configure read security requirements
+    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
+    // configure write security requirements
+    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+    // configure update security requirements
+    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+    }
 
-    _service = new GattService(_uuid[treesize-1], _characteristics, treesize-1);
+    _service = new GattService(_uuid[treesize], _characteristics, treesize);
 
 }
 
@@ -53,7 +53,7 @@ CGattService::CGattService(BLE& ble,
 {
 //decide the length for user description, adding uuid and characteristic
     treesize = ARRAY_SIZE(desc);
-    for(int i=0; i<treesize-1; i++){
+    for(int i=0; i<treesize; i++){
             userdes[i] = new GattAttribute(BLE_UUID_DESCRIPTOR_CHAR_USER_DESC,
             (uint8_t *) desc[i],
             sizeof(desc[i]),
@@ -85,16 +85,16 @@ CGattService::CGattService(BLE& ble,
 
     std::cout << "ANS start" << std::endl;
     printf("treesize: %d\n", treesize);
-//    for(int i= 0; i<treesize-1; i++){
-//    // configure read security requirements
-//    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
-//    // configure write security requirements
-//    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-//    // configure update security requirements
-//    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-//    }
+    for(int i= 0; i<treesize; i++){
+    // configure read security requirements
+    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
+    // configure write security requirements
+    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+    // configure update security requirements
+    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+    }
 
-    _service = new GattService(uuid[treesize-1], _characteristics, treesize-1);
+    _service = new GattService(uuid[treesize], _characteristics, treesize);
     
 
 };
@@ -107,7 +107,7 @@ CGattService::CGattService(BLE& ble, events::EventQueue &event_queue,
                      {
     //decide the length for user description, adding uuid and characteristic
     treesize = ARRAY_SIZE(userdes);
-    for(int i=0; i<treesize-1; i++){
+    for(int i=0; i<treesize; i++){
             userdes[i] = new GattAttribute(BLE_UUID_DESCRIPTOR_CHAR_USER_DESC,
             (uint8_t *) desc[i],
             sizeof(desc[i]),
@@ -117,22 +117,22 @@ CGattService::CGattService(BLE& ble, events::EventQueue &event_queue,
     set_random_UUID(uuid);
     
     uint8_t value = 0;
-    for (int i=0;i<treesize-1; i++){
+    for (int i=0;i<treesize; i++){
         _characteristics[i] = new CCharacteristic<uint8_t>(uuid[i],
                                 _propertiesList[i], 
                                   value, userDescription+i, 1);
     }
 
-//    for(int i= 0; i<treesize-1; i++){
-//    // configure read security requirements
-//    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
-//    // configure write security requirements
-//    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-//    // configure update security requirements
-//    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-//    }
+    for(int i= 0; i<treesize; i++){
+    // configure read security requirements
+    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
+    // configure write security requirements
+    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+    // configure update security requirements
+    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+    }
 
-    _service = new GattService(uuid[treesize-1], _characteristics, treesize-1);
+    _service = new GattService(uuid[treesize], _characteristics, treesize);
 
 };
 
@@ -187,6 +187,7 @@ void CGattService::kernel_clock_update(CCharacteristic<uint32_t>* gatt_character
 
 
 void CGattService::onDataWritten(const GattWriteCallbackParams &params){
+    std::cout << "call gatt server" << std::endl;
      if (params.handle == _characteristics[0]->getValueHandle()) {
         if (params.data[0] % 2 == 0) {
             std::cout << "EVEN value; turning LED2 on" << std::endl;
@@ -205,3 +206,12 @@ void CGattService::onDataWritten(const GattWriteCallbackParams &params){
         std::cout << std::endl;
     }
 }
+
+
+    void CGattService::set_long_random_UUID(UUID::ShortUUIDBytes_t* uuid){
+        
+            for (int k = 0; k < treesize; k++) {
+                    uuid[k] = rand() % 32;
+                    printf("address: %x\n", uuid[k]);
+            }
+    }

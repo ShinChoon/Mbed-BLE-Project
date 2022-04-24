@@ -1,4 +1,5 @@
-
+#ifndef BLE_GATT_IMMEDIATE_ALERT_SERVICE_H
+#define BLE_GATT_IMMEDIATE_ALERT_SERVICE_H
 #include "mbed.h"
 #include <cstdint>
 #include <iostream>
@@ -10,20 +11,23 @@
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 #include "gatt_server.hpp"
+#include "ble_gatt_alert_notification_service.hpp"
 
 class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, public CGattService{
     public:
-        ImmediateAlertService(BLE& ble, events::EventQueue &event_queue): 
+        ImmediateAlertService(BLE& ble, events::EventQueue &event_queue, AlertNotificationService &externService): 
         _led(LED3),
-        CGattService(ble, event_queue)
+        CGattService(ble, event_queue),
+        _extern_service(externService)
+        
         {
 
         //decide the length for user description, adding uuid and characteristic
             ledOut = new PwmOut(LED3);
-            ledOut->period(1.0f);
+            ledOut->period_ms(200);
             ledOut->write(_dutycle);
-            treesize = 2;
-            for(int i=0; i<treesize-1; i++){
+            treesize = ARRAY_SIZE(_characteristics);
+            for(int i=0; i < treesize; i++){
                     userDescription[i] = new GattAttribute(BLE_UUID_DESCRIPTOR_CHAR_USER_DESC,
                     (uint8_t *) _descriptionContent[i],
                     std::strlen(_descriptionContent[i]),
@@ -31,34 +35,43 @@ class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, p
                     false);
             }
 
-            for (int k = 0; k < treesize; k++) {
-                for (int i = 0; i < 16; i++) {
-                    uuid[k][i] = rand() % 256;
-                }
-            }
+        set_long_random_UUID(uuid);
 
-            const char* value0 = 0;
-        _characteristics[0] = new CCharacteristic<const char*>(uuid[0],
+            uint8_t value0 = 0;
+        _characteristics[0] = new CCharacteristic<uint8_t>(uuid[0],
                             _propertiesList[0],
                                         value0, userDescription+0, 1);
    
             std::cout << "IAS start" << std::endl;
-            //for(int i= 0; i<treesize-1; i++){
-            //    // configure read security requirements
-            //    _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
-            //    // configure write security requirements
-            //    _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-            //    // configure update security requirements
-            //    _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
-            //}
+            for(int i= 0; i<treesize; i++){
+                // configure read security requirements
+                _characteristics[i]->setReadSecurityRequirement(ble::att_security_requirement_t::UNAUTHENTICATED);
+                // configure write security requirements
+                _characteristics[i]->setWriteSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+                // configure update security requirements
+                _characteristics[i]->setUpdateSecurityRequirement(ble::att_security_requirement_t::AUTHENTICATED);
+            }
 
-            _service = new GattService(uuid[treesize-1], _characteristics, treesize-1);
+            _service = new GattService(GattService::UUID_IMMEDIATE_ALERT_SERVICE, _characteristics, treesize);
+        }
+
+        bool onWrite(const GattWriteCallbackParams& params){
+            return params.handle == _characteristics[0]->getValueHandle();
         }
 
         virtual void onDataWritten(const GattWriteCallbackParams &params){
-            if(params.handle == _characteristics[0]->getValueHandle()){
-                    std::cout << "EVEN value; turning " << std::endl;
+            std::cout << "call IAS" << std::endl;
+            if(onWrite(params)){
+                    std::cout << "EVEN value; turning " << params.data[0]  << std::endl;
+                    _dutycle = 0.010f*(_levels[params.data[0]]);
+                    std::cout << "Status: " << _status[params.data[0]] << std::endl;
+                    ledOut->write(_dutycle);       
             }
+            else{
+                std::cout << "call from outside" << std::endl;
+                _extern_service.onDataWritten(params);
+            }
+         
         };
 
         ~ImmediateAlertService()
@@ -81,7 +94,8 @@ class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, p
         // declare a value of 2 bytes within a 10 bytes buffer
         DigitalOut _led;
         PwmOut* ledOut;
-        float _dutycle = 0.20f;
+        float _dutycle = 0.75;
+        AlertNotificationService& _extern_service;        
         GattAttribute* userDescription[1];
         const char* _descriptionContent[1] = {
             IASCHARACTERISTIC_DESCRIPTION
@@ -91,6 +105,11 @@ class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, p
             GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | 
             GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE
         };
-        UUID::LongUUIDBytes_t uuid[2];
-    
+        UUID::ShortUUIDBytes_t uuid[1];
+        
+        const float _levels[3] = {100, 75, 10};
+        const char* _status[3] = {"NO ALERT", "MEDIUM", "HIGH"};
+
 };
+
+#endif
