@@ -65,7 +65,9 @@ class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, p
                     std::cout << "EVEN value; turning " << params.data[0]  << std::endl;
                     _dutycle = 0.010f*(_levels[params.data[0]]);
                     std::cout << "Status: " << _status[params.data[0]] << std::endl;
-                    ledOut->write(_dutycle);       
+                    ledOut->write(_dutycle);
+                    _extern_service.switchLevel(_levels[params.data[0]] == 100?false:true);
+    
             }
             else{
                 std::cout << "call from outside" << std::endl;
@@ -94,7 +96,7 @@ class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, p
         // declare a value of 2 bytes within a 10 bytes buffer
         DigitalOut _led;
         PwmOut* ledOut;
-        float _dutycle = 0.75;
+        float _dutycle = 100;
         AlertNotificationService& _extern_service;        
         GattAttribute* userDescription[1];
         const char* _descriptionContent[1] = {
@@ -106,8 +108,12 @@ class ImmediateAlertService: private mbed::NonCopyable<ImmediateAlertService>, p
             GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE
         };
         UUID::ShortUUIDBytes_t uuid[1];
-        
-        const float _levels[3] = {100, 75, 10};
+        enum options{
+            NoAlert = 100,
+            Medium = 75,
+            Hight = 10
+        };
+        const options _levels[3] = {NoAlert, Medium, Hight};
         const char* _status[3] = {"NO ALERT", "MEDIUM", "HIGH"};
 
 };

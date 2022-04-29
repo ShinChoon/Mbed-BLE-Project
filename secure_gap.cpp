@@ -125,7 +125,7 @@
                                                       SecurityManager::IO_CAPS_DISPLAY_ONLY/*IO capabilities*/,
                                                       NULL /*Passkey*/,
                                                       false /*Support data signing*/);
-        printError(error, "_ble.securityManager().init() ");
+        ble_utils::printError(error, "_ble.securityManager().init() ");
         if(error != BLE_ERROR_NONE) {
           return;
         }
@@ -147,7 +147,7 @@
         ble::own_address_type_t address_type;
         ble::address_t address;
         _ble.gap().getAddress(address_type, address);
-        print_address(address);
+        ble_utils::printDeviceAddress(address);
         if (_on_ble_init_callback!=nullptr)
             _on_ble_init_callback();
         if (_on_ble_init_callback2!=nullptr)
@@ -158,7 +158,7 @@
         // Enable privacy
         error =  _ble.gap().enablePrivacy(true);
 
-        printError(error, "_ble.gap().enablePrivacy() ");
+        ble_utils::printError(error, "_ble.gap().enablePrivacy() ");
         // Configure privacy settings
         privacyConfiguration.use_non_resolvable_random_address = false;
         privacyConfiguration.resolution_strategy = ble::peripheral_privacy_configuration_t::REJECT_NON_RESOLVED_ADDRESS;
@@ -167,7 +167,7 @@
 
 
     void CSecureGap::onConnectionComplete(const ble::ConnectionCompleteEvent & event){
-    printError(event.getStatus(), "onConnectionComplete() ");
+    ble_utils::printError(event.getStatus(), "onConnectionComplete() ");
     // get the connection handle
     ble::connection_handle_t handle = event.getConnectionHandle();
     /* Request a change in link security. This will be done
@@ -181,7 +181,7 @@
                           setLinkSecurity(handle,
                                           SecurityManager::SECURITY_MODE_ENCRYPTION_WITH_MITM);
 
-    printError(error, "_ble.securityManager().setLinkSecurity() ");
+    ble_utils::printError(error, "_ble.securityManager().setLinkSecurity() ");
     }
 
 

@@ -34,7 +34,7 @@ void CGAP::OnBleStackInit(BLE::InitializationCompleteCallbackContext *context){
         ble::own_address_type_t address_type;
         ble::address_t address;
         _ble.gap().getAddress(address_type, address);
-        print_address(address);
+        ble_utils::printDeviceAddress(address);
         if (_on_ble_init_callback!=nullptr)
             _on_ble_init_callback();
         if (_on_ble_init_callback2!=nullptr)

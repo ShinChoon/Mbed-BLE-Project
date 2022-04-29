@@ -33,13 +33,12 @@ class AlertNotificationService: private mbed::NonCopyable<AlertNotificationServi
             }
 
         set_long_random_UUID(uuid);
+        _button_count = 0; 
 
-            const char* value0 = 0;
-        _characteristics[0] = new CCharacteristic<const char*>(uuid[0],
+        _characteristics[0] = new CCharacteristic<uint8_t>(uuid[0],
                             _propertiesList[0],
-                                        value0, userDescription+0, 1);
-
-            _button_count = 0;     
+                                        _button_count, userDescription+0, 1);
+   
         _characteristics[1] = new CCharacteristic<uint8_t>(uuid[1],
                             _propertiesList[1],
                                         _button_count, userDescription+1, 1);
@@ -91,15 +90,14 @@ class AlertNotificationService: private mbed::NonCopyable<AlertNotificationServi
         }
 
         void update_button_alert(void){
-            const char* write_val = "SIMPLE ALERT";
             std::cout << Kernel::Clock::now().time_since_epoch().count() << std::endl;
-            CCharacteristic<const char*>* gatt_characteristic = (CCharacteristic<const char*>*)_characteristics[0];
-            gatt_characteristic->set(BLE::Instance().gattServer(), write_val);
+            CCharacteristic<uint8_t>* gatt_characteristic = (CCharacteristic<uint8_t>*)_characteristics[0];
+            gatt_characteristic->set(BLE::Instance().gattServer(), _button_count);
         }        
 
         void button_P_str(void){
             _button_count++;
-            if(_alert_switch){
+            if(_alert_switch && _alert_level){
             _event_queue.call(Callback<void()>(this, &AlertNotificationService::update_button_num));// SIMPLE ALERT
             _event_queue.call(Callback<void()>(this, &AlertNotificationService::update_button_alert));//button press            
             }
@@ -107,6 +105,10 @@ class AlertNotificationService: private mbed::NonCopyable<AlertNotificationServi
 
         void switchAlert(bool swi){
             _alert_switch = swi;
+        }
+
+        void switchLevel(bool swi){
+            _alert_level = swi;
         }
 
         ~AlertNotificationService()
@@ -127,6 +129,7 @@ class AlertNotificationService: private mbed::NonCopyable<AlertNotificationServi
         //GattAttribute attr;
         // declare a value of 2 bytes within a 10 bytes buffer
         bool _alert_switch = false;
+        bool _alert_level = false;
         CGattService& _extern_service;
         int treesize = 0;
         InterruptIn _event;
